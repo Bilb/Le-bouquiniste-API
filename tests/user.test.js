@@ -20,3 +20,11 @@ test('Should signup valid user', async () => {
     expect(user.password).not.toBe('audric1234AZ')
     expect(response.body.password).toBeUndefined()
 })
+
+test('Signup should fail with invalid password', async() => {
+    const response = await request(app).post('/users').send({
+        name: 'Audric Ackermann',
+        email:' audric@example.org',
+        password: '123456789' // invalid password, must contain char maj & min
+    }).expect(400)
+})
