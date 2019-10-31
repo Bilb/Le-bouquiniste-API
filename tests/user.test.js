@@ -17,4 +17,5 @@ test('Should signup valid user', async () => {
     const user = await User.findById(response.body._id)
 
     expect(user).not.toBeNull()
+    expect(user.password).not.toBe('audric1234AZ')
 })
