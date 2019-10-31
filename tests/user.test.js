@@ -18,4 +18,5 @@ test('Should signup valid user', async () => {
 
     expect(user).not.toBeNull()
     expect(user.password).not.toBe('audric1234AZ')
+    expect(response.body.password).toBeUndefined()
 })
