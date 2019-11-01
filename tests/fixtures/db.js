@@ -39,32 +39,50 @@ const userTwo = {
     ]
 }
 
+
+const bookOneId = new mongoose.Types.ObjectId()
+const bookOne = {
+    _id: bookOneId,
+    title: 'My first book title',
+    author: 'My first author',
+    ISBN: '2844661084'
+}
+
+const bookTwoId = new mongoose.Types.ObjectId()
+const bookTwo = {
+    _id: bookTwoId,
+    title: 'My second book title',
+    author: 'My second author',
+    ISBN: '2844661084'
+}
+
+
 const sampleOneId = new mongoose.Types.ObjectId()
 const sampleOne = {
     _id: sampleOneId, 
-    title: 'My first sample title',
-    possesor: userOneId
+    possesor: userOneId,
+    book: bookOneId
 }
 
 const sampleTwoId = new mongoose.Types.ObjectId()
 const sampleTwo = {
     _id: sampleTwoId, 
-    title: 'My second sample title',
-    possesor: userOneId
+    possesor: userOneId,
+    book: bookOneId
 }
 
 const sampleThreeId = new mongoose.Types.ObjectId()
 const sampleThree = {
     _id: sampleThreeId, 
-    title: 'My Three sample title',
-    possesor: userOneId
+    possesor: userOneId,
+    book: bookTwoId
 }
 
 const sampleFourId = new mongoose.Types.ObjectId()
 const sampleFour = {
     _id: sampleFourId, 
-    title: 'My four sample title',
-    possesor: userOneId
+    possesor: userOneId,
+    book: bookTwoId
 }
 
 
@@ -77,5 +95,7 @@ module.exports = {
     sampleTwo,
     sampleThree,
     sampleFour,
+    bookOne,
+    bookTwo,
     setupDatabase
 }

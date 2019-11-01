@@ -48,6 +48,4 @@ test('Cannot get a sample I do not posses', async () => {
         .set('Authorization', 'Bearer ' + userTwo.tokens[0].token)
         .send()
         .expect(404)
-    
-    console.log(rsp.body)
 })
