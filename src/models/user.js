@@ -47,6 +47,10 @@ const userSchema = mongoose.Schema({
             }
         }
     },
+    samples: {
+        type: mongoose.Types.ObjectId,
+        ref:'Sample'  
+    },
     tokens: [{
             token: {
                 type:String,
@@ -71,6 +75,7 @@ userSchema.methods.toJSON = function() {
     const obj = user.toObject()
 
     delete(obj.password)
+    delete(obj.tokens)
     return obj
 }
 
@@ -88,16 +93,23 @@ userSchema.statics.getByCredentials = async (email, password) => {
     }
 }
 
-userSchema.statics.generateAuthToken = async (userID) => {
-    return await jwt.sign({id: userID}, process.env.JWT_SECRET, {expiresIn: '7 days'}).toString()
+userSchema.methods.generateAuthToken = async function () {
+    const user = this
+    const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: '7 days' })
+
+    user.tokens = user.tokens.concat({ token })
+    await user.save()
+    return token
 }
 
 
 userSchema.statics.getUserByToken = async(token) => {
     try {
         jwt.verify(token, process.env.JWT_SECRET)
+
         var decoded = jwt.decode(token, {complete: true});
-        const user = User.findById(decoded.payload._id)
+        const user = await User.findById(decoded.payload._id)
+        
         if(!user) {
             throw new Error('Cannot find a user with this token')
         }
@@ -106,12 +118,6 @@ userSchema.statics.getUserByToken = async(token) => {
         console.log(e)
         throw new Error('Cannot find a user with this token')
     }
-}
-
-userSchema.methods.addToken = async function(token) {
-    const user = this
-    user.tokens.concat({token})
-    await user.save()
 }
 
 const User = mongoose.model('User', userSchema)

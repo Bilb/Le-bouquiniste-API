@@ -78,7 +78,10 @@ test('Invalid email login fail', async () => {
 
 
 test('Can get /me with authentification', async() => {
-    await request(app).get('/users/me')
+    const response = await request(app).get('/users/me')
         .set('Authorization', 'Bearer ' + userOne.tokens[0].token)
         .send().expect(200)
+
+    expect(response.body.email).toBe(userOne.email)
+    expect(response.body._id).toBe(userOne._id.toString())
 })

@@ -2041,6 +2041,11 @@ isarray@1.0.0, isarray@~1.0.0:
   resolved "https://registry.yarnpkg.com/isarray/-/isarray-1.0.0.tgz#bb935d48582cba168c06834957a54a3e07124f11"
   integrity sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE=
 
+isbn-validate@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/isbn-validate/-/isbn-validate-1.0.3.tgz#dbb4e1dde6a492b8fed4b4c9816e4dc58743e4a9"
+  integrity sha512-x8azK6Jx2nvcbZqBOdEPtoKyrMAN6DM4JdfvFLP0EcAUu6/VELFy4rODI/5masnMRGLMqsrDUrG7o2n0ThpemQ==
+
 isexe@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"

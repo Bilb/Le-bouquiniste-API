@@ -1,6 +1,7 @@
 const express = require('express')
 const router = new express.Router()
 const User = require('../models/user')
+const auth = require('../middleware/auth')
 
 
 router.post('/users', async (req, res) => {
@@ -10,8 +11,7 @@ router.post('/users', async (req, res) => {
         if(existing) {
             throw new Error('A user already exists with this email')
         }
-        const token = await User.generateAuthToken(user.userID)
-        user.tokens.concat({token})
+        const token = await user.generateAuthToken()
         await user.save()
         return res.status(201).send({user, token})
     } catch (e) {
@@ -23,8 +23,7 @@ router.post('/users', async (req, res) => {
 router.post('/users/login', async (req, res) => {
     try {
         const user = await User.getByCredentials(req.body.email, req.body.password)
-        const token = await User.generateAuthToken(user.userID)
-        await user.addToken(token)
+        const token = await user.generateAuthToken()
         return res.status(200).send({user, token})
     }
     catch (e) {
@@ -32,24 +31,11 @@ router.post('/users/login', async (req, res) => {
     }
 })
 
-router.get('/users/me', async (req,res) => {
+router.get('/users/me', auth, async (req,res) => {
     try {
-        if(!req.headers || !req.headers.authorization) {
-            throw new Error('These credentials are not valid')
-        }
-        var auth = req.headers.authorization
-        if(!auth.startsWith('Bearer ')) {
-            throw new Error('These credentials are not valid')
-        }
-        auth = auth.replace('Bearer ', '')
-        const user = await User.getUserByToken(auth)
-        if(!user) {
-            throw new Error('These credentials are not valid')
-        }
-        res.send(user)
+        res.send(req.user)
     }
     catch (e) {
-        console.log(e)
         res.status(400).send(e)
     }
 })
