@@ -30,6 +30,19 @@ router.post('/users/samples', auth, async (req,res) => {
     }
 })
 
+router.get('/users/samples/:id', auth, async(req, res) => {
+    try {
+        const sample = await Sample.findOne({_id:req.params.id, possesor:req.user._id})
+        if(!sample) {
+            return res.status(404).send()
+        }
+        res.send(sample)
+    } catch(e) {
+        console.log(e)
+        res.status(400).send()
+    }
+})
+
 
 
 module.exports = router
