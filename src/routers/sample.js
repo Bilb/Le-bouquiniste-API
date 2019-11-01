@@ -7,8 +7,20 @@ const router = new express.Router()
 
 router.get('/users/samples', auth, async (req,res) => {
     try {
-        const samples = await Sample.find({possesor: req.user._id})
-        res.send(samples)
+        var match = {}
+        if(req.query.title) {
+            match.title = req.query.title
+        }
+        await req.user.populate({
+            path: 'samples',
+            match,
+            options: {
+                limit : parseInt(req.query.limit),
+                skip: parseInt(req.query.skip)
+            }
+        }).execPopulate()
+
+        res.send(req.user.samples)
     }
     catch (e) {
         console.log(e)

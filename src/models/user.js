@@ -47,10 +47,6 @@ const userSchema = mongoose.Schema({
             }
         }
     },
-    samples: {
-        type: mongoose.Types.ObjectId,
-        ref:'Sample'  
-    },
     tokens: [{
             token: {
                 type:String,
@@ -59,8 +55,13 @@ const userSchema = mongoose.Schema({
         }]
 }, {
     timestamps: true
-}
-)
+})
+
+userSchema.virtual('samples', {
+    ref: 'Sample',
+    localField: '_id',
+    foreignField: 'possesor'
+})
 
 userSchema.pre('save', async function (next) {
     const user = this
