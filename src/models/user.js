@@ -105,10 +105,12 @@ userSchema.methods.generateAuthToken = async function () {
 
 userSchema.statics.getUserByToken = async(token) => {
     try {
-        jwt.verify(token, process.env.JWT_SECRET)
-
-        var decoded = jwt.decode(token, {complete: true});
-        const user = await User.findById(decoded.payload._id)
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        
+        const user = await User.findOne({ _id: decoded._id, 'tokens.token': token })
+        if (!user) {
+            throw new Error()
+        }
         
         if(!user) {
             throw new Error('Cannot find a user with this token')

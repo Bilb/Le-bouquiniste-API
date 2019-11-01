@@ -1,19 +1,21 @@
 const mongoose = require('mongoose')
-const ISBN = require('isbn-validate')
 
-mongoose.Schema = {
+const sampleSchema = mongoose.Schema({
     title: {
         type:String,
         required: true,
         trim: true,
-        validate(value) {
-            if(!ISBN.validate(value)) {
-                throw new Error('Invalid ISBN.')
-            }
-        }
+        min:3,
+        max:200
     },
     possesor: {
-        type:Schema.Types.ObjectID,
+        type:mongoose.Schema.Types.ObjectID,
         ref: 'User'
     }
-}
+})
+
+
+
+const Sample = mongoose.model('Sample', sampleSchema)
+
+module.exports = Sample

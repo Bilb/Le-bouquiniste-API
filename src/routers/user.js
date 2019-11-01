@@ -27,7 +27,7 @@ router.post('/users/login', async (req, res) => {
         return res.status(200).send({user, token})
     }
     catch (e) {
-        return res.status(400).send(e)
+        return res.status(400).send({error: "Failed to authenticate"})
     }
 })
 
