@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const passwordValidator = require('password-validator')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 // Setup our password validator schema
 var passwordSchema = new passwordValidator();
@@ -45,7 +46,13 @@ const userSchema = mongoose.Schema({
                 throw new Error('Password does not meet requirements about: ' + errors)
             }
         }
-    }
+    },
+    tokens: [{
+            token: {
+                type:String,
+                required: true
+            }
+        }]
 }, {
     timestamps: true
 }
@@ -79,7 +86,32 @@ userSchema.statics.getByCredentials = async (email, password) => {
     else {
         throw new Error('Cannot login with those credentials')
     }
+}
 
+userSchema.statics.generateAuthToken = async (userID) => {
+    return await jwt.sign({id: userID}, process.env.JWT_SECRET, {expiresIn: '7 days'}).toString()
+}
+
+
+userSchema.statics.getUserByToken = async(token) => {
+    try {
+        jwt.verify(token, process.env.JWT_SECRET)
+        var decoded = jwt.decode(token, {complete: true});
+        const user = User.findById(decoded.payload._id)
+        if(!user) {
+            throw new Error('Cannot find a user with this token')
+        }
+        return user
+    } catch(e) {
+        console.log(e)
+        throw new Error('Cannot find a user with this token')
+    }
+}
+
+userSchema.methods.addToken = async function(token) {
+    const user = this
+    user.tokens.concat({token})
+    await user.save()
 }
 
 const User = mongoose.model('User', userSchema)

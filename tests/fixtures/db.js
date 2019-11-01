@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const User = require('../../src/models/user')
+const jwt = require('jsonwebtoken')
 
 const setupDatabase = async () => {
     await User.deleteMany()
@@ -12,7 +13,10 @@ const userOne = new User({
     _id: userOneId,
     name: 'Audric1 Ackermann1',
     email: 'audric1@example.org',
-    password:'Azerty1234'
+    password:'Azerty1234',
+    tokens: [
+        { token: jwt.sign({ _id: userOneId }, process.env.JWT_SECRET) }
+    ]
 })
 
 const userTwoId = new mongoose.Types.ObjectId()

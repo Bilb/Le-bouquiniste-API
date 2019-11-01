@@ -14,11 +14,17 @@ test('Should signup valid user', async () => {
         password: "audric1234AZ"
     }).expect(201)
 
-    const user = await User.findById(response.body._id)
+    const user = await User.findById(response.body.user._id)
 
     expect(user).not.toBeNull()
     expect(user.password).not.toBe('audric1234AZ')
-    expect(response.body.password).toBeUndefined()
+    expect(response.body.user.password).toBeUndefined()
+    expect(response.body).toMatchObject({
+        user: {
+            email: "audric@example.org",
+            name: "Audric Ackermann",
+        },
+    })
 })
 
 test('Signup should fail with invalid password', async() => {
@@ -46,8 +52,33 @@ test('Valid login must work', async () => {
     }).expect(200)
 
     expect(response.body).toMatchObject({
-        email: userOne.email,
-        name: userOne.name,
-        _id: userOne._id.toString()
+        user: {
+            email: userOne.email,
+            name: userOne.name,
+            _id: userOne._id.toString()
+        },
     })
+})
+
+
+test('Invalid password login fail', async () => {
+    const response = await request(app).post('/users/login').send({
+        email: userOne.email,
+        password: userTwo.password
+    }).expect(400)
+})
+
+
+test('Invalid email login fail', async () => {
+    await request(app).post('/users/login').send({
+        email: userTwo.email,
+        password: userOne.password
+    }).expect(400)
+})
+
+
+test('Can get /me with authentification', async() => {
+    await request(app).get('/users/me')
+        .set('Authorization', 'Bearer ' + userOne.tokens[0].token)
+        .send().expect(200)
 })
